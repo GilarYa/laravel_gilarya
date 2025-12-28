@@ -14,15 +14,6 @@
     </a>
 </div>
 
-@if(session('success'))
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-        {{ session('success') }}
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
-@endif
-
 <!-- DataTales Example -->
 <div class="card shadow mb-4">
     <div class="card-header py-3">
@@ -71,67 +62,55 @@
         </div>
     </div>
 </div>
-
-<!-- Delete Modal-->
-<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="deleteModalLabel">Konfirmasi Hapus</h5>
-                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">×</span>
-                </button>
-            </div>
-            <div class="modal-body">Apakah Anda yakin ingin menghapus data <strong id="deleteItemName"></strong>?</div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" type="button" data-dismiss="modal">Batal</button>
-                <button class="btn btn-danger" type="button" id="confirmDelete">Hapus</button>
-            </div>
-        </div>
-    </div>
-</div>
 @endsection
 
 @push('scripts')
 <script>
 $(document).ready(function() {
-    var deleteId = null;
-    
-    // Handle delete button click
+    // Handle delete button click with SweetAlert2
     $('.btn-delete').on('click', function() {
-        deleteId = $(this).data('id');
+        var id = $(this).data('id');
         var nama = $(this).data('nama');
-        $('#deleteItemName').text(nama);
-        $('#deleteModal').modal('show');
-    });
-    
-    // Handle confirm delete
-    $('#confirmDelete').on('click', function() {
-        if (deleteId) {
-            $.ajax({
-                url: '/rumah-sakit/' + deleteId,
-                type: 'DELETE',
-                success: function(response) {
-                    if (response.success) {
-                        $('#row-' + deleteId).fadeOut(300, function() {
-                            $(this).remove();
+        
+        Swal.fire({
+            title: 'Konfirmasi Hapus',
+            text: 'Apakah Anda yakin ingin menghapus "' + nama + '"?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#e74a3b',
+            cancelButtonColor: '#858796',
+            confirmButtonText: 'Ya, Hapus!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '/rumah-sakit/' + id,
+                    type: 'DELETE',
+                    success: function(response) {
+                        if (response.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Terhapus!',
+                                text: response.message,
+                                timer: 1500,
+                                showConfirmButton: false
+                            }).then(() => {
+                                // Reload halaman agar nomor urut ter-refresh
+                                location.reload();
+                            });
+                        }
+                    },
+                    error: function(xhr) {
+                        var message = xhr.responseJSON ? xhr.responseJSON.message : 'Terjadi kesalahan';
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Gagal!',
+                            text: message
                         });
-                        $('#deleteModal').modal('hide');
-                        // Show success alert
-                        $('<div class="alert alert-success alert-dismissible fade show" role="alert">' +
-                            response.message +
-                            '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
-                            '<span aria-hidden="true">&times;</span></button></div>')
-                            .insertAfter('.d-sm-flex');
                     }
-                },
-                error: function(xhr) {
-                    var message = xhr.responseJSON ? xhr.responseJSON.message : 'Terjadi kesalahan';
-                    alert(message);
-                    $('#deleteModal').modal('hide');
-                }
-            });
-        }
+                });
+            }
+        });
     });
 });
 </script>

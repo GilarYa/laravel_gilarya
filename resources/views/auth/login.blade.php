@@ -41,14 +41,6 @@
                                     <div class="text-center">
                                         <h1 class="h4 text-gray-900 mb-4">Selamat Datang!</h1>
                                     </div>
-                                    
-                                    @if ($errors->any())
-                                        <div class="alert alert-danger">
-                                            @foreach ($errors->all() as $error)
-                                                <p class="mb-0">{{ $error }}</p>
-                                            @endforeach
-                                        </div>
-                                    @endif
 
                                     <form class="user" method="POST" action="{{ route('login.submit') }}">
                                         @csrf
@@ -92,6 +84,19 @@
 
     <!-- Custom scripts for all pages-->
     <script src="{{ asset('js/sb-admin-2.min.js') }}"></script>
+
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    @if ($errors->any())
+    <script>
+        Swal.fire({
+            icon: 'error',
+            title: 'Login Gagal!',
+            text: '{{ $errors->first() }}'
+        });
+    </script>
+    @endif
 
 </body>
 
