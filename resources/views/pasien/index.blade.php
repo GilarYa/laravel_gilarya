@@ -53,7 +53,7 @@
 @push('scripts')
 <script>
 $(document).ready(function() {
-    // Handle filter change with AJAX - menggunakan URL relatif agar support HTTPS
+    // Handle filter change with AJAX
     $('#filterRumahSakit').on('change', function() {
         var rumahSakitId = $(this).val();
         var baseUrl = window.location.origin + '/pasien';
