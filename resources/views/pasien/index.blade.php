@@ -53,14 +53,19 @@
 @push('scripts')
 <script>
 $(document).ready(function() {
-    // Handle filter change with AJAX
+    // Handle filter change with AJAX - menggunakan URL relatif agar support HTTPS
     $('#filterRumahSakit').on('change', function() {
         var rumahSakitId = $(this).val();
+        var baseUrl = window.location.origin + '/pasien';
+        var url = baseUrl;
+        
+        if (rumahSakitId) {
+            url += '?rumah_sakit_id=' + rumahSakitId;
+        }
         
         $.ajax({
-            url: '{{ route("pasien.index") }}',
+            url: url,
             type: 'GET',
-            data: { rumah_sakit_id: rumahSakitId },
             success: function(response) {
                 $('#tableContainer').html(response.html);
                 $('#paginationContainer').html(response.pagination);
@@ -95,7 +100,7 @@ $(document).ready(function() {
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
-                        url: '/pasien/' + id,
+                        url: window.location.origin + '/pasien/' + id,
                         type: 'DELETE',
                         success: function(response) {
                             if (response.success) {
@@ -106,7 +111,6 @@ $(document).ready(function() {
                                     timer: 1500,
                                     showConfirmButton: false
                                 }).then(() => {
-                                    // Reload halaman agar nomor urut ter-refresh
                                     location.reload();
                                 });
                             }

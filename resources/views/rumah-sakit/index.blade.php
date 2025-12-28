@@ -84,7 +84,7 @@ $(document).ready(function() {
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: '/rumah-sakit/' + id,
+                    url: window.location.origin + '/rumah-sakit/' + id,
                     type: 'DELETE',
                     success: function(response) {
                         if (response.success) {
@@ -95,7 +95,6 @@ $(document).ready(function() {
                                 timer: 1500,
                                 showConfirmButton: false
                             }).then(() => {
-                                // Reload halaman agar nomor urut ter-refresh
                                 location.reload();
                             });
                         }
