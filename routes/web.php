@@ -2,7 +2,6 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
-use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\RumahSakitController;
 use App\Http\Controllers\PasienController;
 
@@ -16,9 +15,10 @@ Route::middleware('guest')->group(function () {
 // Authenticated routes
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard'); 
-    // Rumah Sakit
-    Route::resource('rumah-sakit', RumahSakitController::class)->except(['show']); 
-    // Pasien
+    
+    // Rumah Sakit CRUD
+    Route::resource('rumah-sakit', RumahSakitController::class)->except(['show']);
+    
+    // Pasien CRUD
     Route::resource('pasien', PasienController::class)->except(['show']);
 });
